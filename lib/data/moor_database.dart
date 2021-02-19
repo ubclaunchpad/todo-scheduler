@@ -3,7 +3,9 @@ import 'package:moor_flutter/moor_flutter.dart';
 
 part 'moor_database.g.dart';
 
+//Table for Calendar Items
 class CalendarItems extends Table {
+  //autoincrement automatically sets id as the primary key
   IntColumn get id => integer().autoIncrement()();
 
   TextColumn get title => text().withLength(min: 1)();
@@ -13,6 +15,7 @@ class CalendarItems extends Table {
   DateTimeColumn get endTime => dateTime()();
 }
 
+//Table for Todo Items
 class TodoItems extends Table {
   IntColumn get id => integer().autoIncrement()();
 
