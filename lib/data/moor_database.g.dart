@@ -587,3 +587,14 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities =>
       [calendarItems, todoItems];
 }
+
+// **************************************************************************
+// DaoGenerator
+// **************************************************************************
+
+mixin _$TodoItemDaoMixin on DatabaseAccessor<LocalDatabase> {
+  $TodoItemsTable get todoItems => attachedDatabase.todoItems;
+}
+mixin _$CalendarItemDaoMixin on DatabaseAccessor<LocalDatabase> {
+  $CalendarItemsTable get calendarItems => attachedDatabase.calendarItems;
+}
