@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:todo_scheduler/screens/calendar.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(TodoCalApp());
 
-class MyApp extends StatelessWidget {
+class TodoCalApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'To-Do Scheduler',
-      home: Scaffold(
+      home: HomeScreen(),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Scaffold(
         appBar: AppBar(
           title: Text('To-Do Scheduler'),
         ),
@@ -25,6 +35,10 @@ class MyApp extends StatelessWidget {
               child: Text("Calendar"),
               onPressed: () {
                 // TODO: implement navigation from Home Page to Calendar page using this button
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CalendarScreen()),
+                );
               },
             ),
           ],
