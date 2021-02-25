@@ -93,11 +93,19 @@ class TodoItemDao extends DatabaseAccessor<LocalDatabase>
 
   Future<List<TodoItem>> getAllTodoItems() => select(todoItems).get();
 
+  //Required since instantiating a Todo Item without id will have a null id
+  // - The id is only autoincremented after it is inserted into the local db
+  // - So to get the id we must insert it into the db & then retrieve it
+  Future<TodoItem> getTodo(String title) =>
+      (select(todoItems)..where((todoItem) => todoItem.title.equals(title)))
+          .getSingle();
+
   Stream<List<TodoItem>> watchAllTodoItems() => select(todoItems).watch();
 
   Future<int> insertTodoItem(TodoItem todoItem) =>
       into(todoItems).insert(todoItem);
 
+  //Replaces the pre-existing TodoItem with the same id as the todoItem argument
   Future<bool> updateTodoItem(TodoItem todoItem) =>
       update(todoItems).replace(todoItem);
 
@@ -123,6 +131,7 @@ class CalendarItemDao extends DatabaseAccessor<LocalDatabase>
   Future<int> insertCalendarItem(CalendarItem calendarItem) =>
       into(calendarItems).insert(calendarItem);
 
+  //Replaces the pre-existing Calendar Item with the same id as the calendarItem argument
   Future<bool> updateCalendarItem(CalendarItem calendarItem) =>
       update(calendarItems).replace(calendarItem);
 
