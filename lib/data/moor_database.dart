@@ -1,9 +1,14 @@
-import 'package:flutter/rendering.dart';
-import 'package:moor_flutter/moor_flutter.dart';
+// import 'dart:html';
+
+import 'package:moor/moor.dart';
+// import 'package:moor/ffi.dart';
+// import 'package:path_provider/path_provider.dart';
+// import 'package:path/path.dart' as p;
+// import 'package:moor/moor.dart';
+// import 'dart:io';
 
 part 'moor_database.g.dart';
 
-//Table for Calendar Items
 @DataClassName("CalendarItem")
 class CalendarItems extends Table {
   //autoincrement automatically sets id as the primary key
@@ -29,12 +34,16 @@ class TodoItems extends Table {
   DateTimeColumn get dateAdded => dateTime()();
 }
 
-//TODO: Set logStatements to false for production
+//"A Query Exectutor is responsible for executing statements on a database and returning the results"
+// LazyDatabase _openConnection() {
+//   return LazyDatabase(() async {
+//     return VmDatabase('db.sqlite')
+//   });
+// }
+
 @UseMoor(tables: [CalendarItems, TodoItems])
 class LocalDatabase extends _$LocalDatabase {
-  LocalDatabase()
-      : super((FlutterQueryExecutor.inDatabaseFolder(
-            path: 'db.sqlite', logStatements: true)));
+  LocalDatabase(QueryExecutor queryExecutor) : super(queryExecutor);
 
   /*
   The "version" of the db. Should be incremented whenever changing/adding
@@ -42,6 +51,34 @@ class LocalDatabase extends _$LocalDatabase {
   */
   @override
   int get schemaVersion => 1;
+
+  // Future<List<TodoItem>> getAllTodoItems() => select(todoItems).get();
+
+  // Stream<List<TodoItem>> watchAllTodoItems() => select(todoItems).watch();
+
+  // Future<int> insertTodoItem(TodoItem todoItem) =>
+  //     into(todoItems).insert(todoItem);
+
+  // Future<bool> updateTodoItem(TodoItem todoItem) =>
+  //     update(todoItems).replace(todoItem);
+
+  // Future<int> deleteTodoItem(TodoItem todoItem) =>
+  //     delete(todoItems).delete(todoItem);
+
+  // Future<List<CalendarItem>> getAllCalendarItems() =>
+  //     select(calendarItems).get();
+
+  // Stream<List<CalendarItem>> watchAllCalendarItems() =>
+  //     select(calendarItems).watch();
+
+  // Future<int> insertCalendarItem(CalendarItem calendarItem) =>
+  //     into(calendarItems).insert(calendarItem);
+
+  // Future<bool> updateCalendarItem(CalendarItem calendarItem) =>
+  //     update(calendarItems).replace(calendarItem);
+
+  // Future<int> deleteCalendarItem(CalendarItem calendarItem) =>
+  //     delete(calendarItems).delete(calendarItem);
 }
 
 //Data Access Object for TodoItems table
@@ -54,21 +91,22 @@ class TodoItemDao extends DatabaseAccessor<LocalDatabase>
   //This constructor allows local db to create an instance of this DAO
   TodoItemDao(this.db) : super(db);
 
-  //Get all items
   Future<List<TodoItem>> getAllTodoItems() => select(todoItems).get();
-  //Watches for changes in the items
+
   Stream<List<TodoItem>> watchAllTodoItems() => select(todoItems).watch();
-  //Inserts an item
+
   Future<int> insertTodoItem(TodoItem todoItem) =>
       into(todoItems).insert(todoItem);
-  //Updates an item
+
   Future<bool> updateTodoItem(TodoItem todoItem) =>
       update(todoItems).replace(todoItem);
-  //Deletes an item
+
   Future<int> deleteTodoItem(TodoItem todoItem) =>
       delete(todoItems).delete(todoItem);
 }
 
+//Data Access Object for CalendarItems table
+// - Where all queries for the CalendarItems table will go
 @UseDao(tables: [CalendarItems])
 class CalendarItemDao extends DatabaseAccessor<LocalDatabase>
     with _$CalendarItemDaoMixin {
@@ -76,19 +114,18 @@ class CalendarItemDao extends DatabaseAccessor<LocalDatabase>
 
   CalendarItemDao(this.db) : super(db);
 
-  //Get all items
   Future<List<CalendarItem>> getAllCalendarItems() =>
       select(calendarItems).get();
-  //Watches for changes in the items
+
   Stream<List<CalendarItem>> watchAllCalendarItems() =>
       select(calendarItems).watch();
-  //Inserts an item
+
   Future<int> insertCalendarItem(CalendarItem calendarItem) =>
       into(calendarItems).insert(calendarItem);
-  //Updates an item
+
   Future<bool> updateCalendarItem(CalendarItem calendarItem) =>
       update(calendarItems).replace(calendarItem);
-  //Deletes an item
+
   Future<int> deleteCalendarItem(CalendarItem calendarItem) =>
       delete(calendarItems).delete(calendarItem);
 }
