@@ -8,6 +8,7 @@ class CalendarScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       // TODO: personalize title with user's name
+      key: Key("Calendar Screen"),
       title: 'Calendar',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: Calendar(title: 'Calendar'),
@@ -42,6 +43,12 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
         'CPSC 320: 14:00 - 14:50',
         'CPSC 322: 15:00 - 15:50',
         'Bike Practice: 18:00 - 19:25',
+        'dummy event 1',
+        'dummy event 2',
+        'dummy event 3',
+        'dummy event 4',
+        'dummy event 5',
+        'dummy event 6',
       ],
       _selectedDay.subtract(Duration(days: 5)): [
         'Launch Pad Meeting: 18:30 - 19:00'
@@ -112,45 +119,43 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
 
   Widget _buildTableCalendar() {
     return TableCalendar(
+      key: Key("Calendar Screen - Table Calendar"),
       calendarController: _calendarController,
       events: _events,
       startingDayOfWeek: StartingDayOfWeek.monday,
       calendarStyle: CalendarStyle(
-        selectedColor: Colors.deepOrange[400],
-        todayColor: Colors.deepOrange[200],
-        markersColor: Colors.brown[700],
-        outsideDaysVisible: false,
+        selectedColor: Colors.blue[700],
+        todayColor: Colors.blue[200],
+        markersColor: Colors.deepPurple[400],
+        outsideDaysVisible: true,
       ),
       headerStyle: HeaderStyle(
         formatButtonTextStyle:
             TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
         formatButtonDecoration: BoxDecoration(
-          color: Colors.deepOrange[400],
+          color: Colors.deepPurple[400],
           borderRadius: BorderRadius.circular(16.0),
         ),
       ),
       onDaySelected: _onDaySelected,
-      onVisibleDaysChanged: _onVisibleDaysChanged,
+      //onVisibleDaysChanged: _onVisibleDaysChanged,
       onCalendarCreated: _onCalendarCreated,
     );
   }
 
   Widget _buildEventList() {
-    return ListView(
-      children: _selectedEvents
-          .map((event) => Container(
-                decoration: BoxDecoration(
-                  border: Border.all(width: 0.8),
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                child: ListTile(
-                  title: Text(event.toString()),
-                  onTap: () => print('$event tapped!'),
-                ),
-              ))
-          .toList(),
-    );
+    return ListView.builder(
+        key: Key("Calendar Screen - Events List"),
+        padding: const EdgeInsets.all(8),
+        itemCount: _selectedEvents.length,
+        itemBuilder: (context, index) {
+          // TODO: refactor in Event class issue
+          // TODO: order events by time after Event class implemented
+          final event = _selectedEvents[index].toString();
+          return Card(
+              child: ListTile(
+            title: Text(event),
+          ));
+        });
   }
 }
