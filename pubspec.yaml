@@ -27,7 +27,6 @@ dependencies:
   moor_flutter: ^3.1.0
   moor_ffi: ^0.8.0
   sqlite3_flutter_libs: ^0.2.0
-  # moor_ffi: ^0.0.1
   path_provider: ^1.6.27
   path: ^1.7.0
 

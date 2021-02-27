@@ -51,34 +51,6 @@ class LocalDatabase extends _$LocalDatabase {
   */
   @override
   int get schemaVersion => 1;
-
-  // Future<List<TodoItem>> getAllTodoItems() => select(todoItems).get();
-
-  // Stream<List<TodoItem>> watchAllTodoItems() => select(todoItems).watch();
-
-  // Future<int> insertTodoItem(TodoItem todoItem) =>
-  //     into(todoItems).insert(todoItem);
-
-  // Future<bool> updateTodoItem(TodoItem todoItem) =>
-  //     update(todoItems).replace(todoItem);
-
-  // Future<int> deleteTodoItem(TodoItem todoItem) =>
-  //     delete(todoItems).delete(todoItem);
-
-  // Future<List<CalendarItem>> getAllCalendarItems() =>
-  //     select(calendarItems).get();
-
-  // Stream<List<CalendarItem>> watchAllCalendarItems() =>
-  //     select(calendarItems).watch();
-
-  // Future<int> insertCalendarItem(CalendarItem calendarItem) =>
-  //     into(calendarItems).insert(calendarItem);
-
-  // Future<bool> updateCalendarItem(CalendarItem calendarItem) =>
-  //     update(calendarItems).replace(calendarItem);
-
-  // Future<int> deleteCalendarItem(CalendarItem calendarItem) =>
-  //     delete(calendarItems).delete(calendarItem);
 }
 
 //Data Access Object for TodoItems table
@@ -109,8 +81,11 @@ class TodoItemDao extends DatabaseAccessor<LocalDatabase>
   Future<bool> updateTodoItem(TodoItem todoItem) =>
       update(todoItems).replace(todoItem);
 
-  Future<int> deleteTodoItem(TodoItem todoItem) =>
-      delete(todoItems).delete(todoItem);
+  //Deleting based on title of TodoItem
+  // - Might not be the best implementation
+  Future<int> deleteTodoItem(String title) =>
+      (delete(todoItems)..where((todoItem) => todoItem.title.equals(title)))
+          .go();
 }
 
 //Data Access Object for CalendarItems table
@@ -125,6 +100,10 @@ class CalendarItemDao extends DatabaseAccessor<LocalDatabase>
   Future<List<CalendarItem>> getAllCalendarItems() =>
       select(calendarItems).get();
 
+  Future<CalendarItem> getCalendarItem(String title) => (select(calendarItems)
+        ..where((calendarItem) => calendarItem.title.equals(title)))
+      .getSingle();
+
   Stream<List<CalendarItem>> watchAllCalendarItems() =>
       select(calendarItems).watch();
 
@@ -135,6 +114,9 @@ class CalendarItemDao extends DatabaseAccessor<LocalDatabase>
   Future<bool> updateCalendarItem(CalendarItem calendarItem) =>
       update(calendarItems).replace(calendarItem);
 
-  Future<int> deleteCalendarItem(CalendarItem calendarItem) =>
-      delete(calendarItems).delete(calendarItem);
+  //Deleting based on title of TodoItem
+  // - Might not be the best implementation
+  Future<int> deleteCalendarItem(String title) => (delete(calendarItems)
+        ..where((calendarItem) => calendarItem.title.equals(title)))
+      .go();
 }
