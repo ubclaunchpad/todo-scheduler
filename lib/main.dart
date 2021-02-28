@@ -38,7 +38,6 @@ class HomeScreen extends StatelessWidget {
               key: Key("Home Screen - Calendar Button"),
               child: Text("Calendar"),
               onPressed: () {
-                // TODO: implement navigation from Home Page to Calendar page using this button
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => CalendarScreen()),
