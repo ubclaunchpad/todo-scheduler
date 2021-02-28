@@ -6,12 +6,10 @@ import 'package:intl/date_symbol_data_local.dart';
 class CalendarScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return Scaffold(
       // TODO: personalize title with user's name
       key: Key("Calendar Screen"),
-      title: 'Calendar',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: Calendar(title: 'Calendar'),
+      body: Calendar(title: 'Calendar'),
     );
   }
 }
@@ -35,8 +33,7 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     final _selectedDay = DateTime.now();
-
-    // _events = load from database
+    // TODO: load events from database
     _events = {
       _selectedDay.subtract(Duration(days: 12)): [
         'CPSC 310: 13:00 - 13:50',
@@ -101,16 +98,23 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              // TODO: navigate to Add Event screen
+            },
+          ),
+        ],
       ),
       body: Column(
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
-          // Switch out 2 lines below to play with TableCalendar's settings
-          //-----------------------
           _buildTableCalendar(),
           const SizedBox(height: 8.0),
-          // _buildButtons(),
-          // const SizedBox(height: 8.0),
           Expanded(child: _buildEventList()),
         ],
       ),
