@@ -1,11 +1,4 @@
-// import 'dart:html';
-
 import 'package:moor/moor.dart';
-// import 'package:moor/ffi.dart';
-// import 'package:path_provider/path_provider.dart';
-// import 'package:path/path.dart' as p;
-// import 'package:moor/moor.dart';
-// import 'dart:io';
 
 part 'moor_database.g.dart';
 
@@ -33,13 +26,6 @@ class TodoItems extends Table {
 
   DateTimeColumn get dateAdded => dateTime()();
 }
-
-//"A Query Exectutor is responsible for executing statements on a database and returning the results"
-// LazyDatabase _openConnection() {
-//   return LazyDatabase(() async {
-//     return VmDatabase('db.sqlite')
-//   });
-// }
 
 @UseMoor(tables: [CalendarItems, TodoItems])
 class LocalDatabase extends _$LocalDatabase {
