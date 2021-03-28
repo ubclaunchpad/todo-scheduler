@@ -126,6 +126,7 @@ void main() {
   test('add one calendar item', () async {
     CalendarItem fillOutTaxes = CalendarItem(
         title: "fill out taxes",
+        date: DateTime.parse("2020-12-12"),
         startTime: DateTime.now(),
         endTime: DateTime.now().add(new Duration(minutes: 10)));
 
@@ -142,16 +143,19 @@ void main() {
   test('add multiple calendar items', () async {
     CalendarItem fillOutTaxes = CalendarItem(
         title: "fill out taxes",
+        date: DateTime.parse("2020-12-12"),
         startTime: DateTime.now(),
         endTime: DateTime.now().add(new Duration(minutes: 10)));
 
     CalendarItem workOut = CalendarItem(
         title: "work out",
+        date: DateTime.parse("2020-12-12"),
         startTime: DateTime.now(),
         endTime: DateTime.now().add(new Duration(minutes: 90)));
 
     CalendarItem cookChicken = CalendarItem(
         title: "cook that chicken",
+        date: DateTime.parse("2020-12-12"),
         startTime: DateTime.now(),
         endTime: DateTime.now().add(new Duration(minutes: 20)));
 
@@ -176,6 +180,7 @@ void main() {
   test('update calendar item', () async {
     CalendarItem cookChicken = CalendarItem(
         title: "cook that chicken",
+        date: DateTime.parse("2020-12-12"),
         startTime: DateTime.now(),
         endTime: DateTime.now().add(new Duration(minutes: 20)));
 
@@ -193,6 +198,7 @@ void main() {
     CalendarItem cookBeef = CalendarItem(
         id: cookChickenDB.id,
         title: "cook da beef",
+        date: DateTime.parse("2020-12-12"),
         startTime: DateTime.now(),
         endTime: DateTime.now().add(new Duration(minutes: 30)));
 
@@ -207,16 +213,19 @@ void main() {
   test('delete calendar item', () async {
     CalendarItem fillOutTaxes = CalendarItem(
         title: "fill out taxes",
+        date: DateTime.parse("2020-12-12"),
         startTime: DateTime.now(),
         endTime: DateTime.now().add(new Duration(minutes: 10)));
 
     CalendarItem workOut = CalendarItem(
         title: "work out",
+        date: DateTime.parse("2020-12-12"),
         startTime: DateTime.now(),
         endTime: DateTime.now().add(new Duration(minutes: 90)));
 
     CalendarItem cookChicken = CalendarItem(
         title: "cook that chicken",
+        date: DateTime.parse("2020-12-12"),
         startTime: DateTime.now(),
         endTime: DateTime.now().add(new Duration(minutes: 20)));
 

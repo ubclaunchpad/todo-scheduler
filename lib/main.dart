@@ -1,20 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:moor_flutter/moor_flutter.dart' hide Column;
 import 'package:todo_scheduler/screens/calendar_screen.dart';
+import './data/moor_database.dart';
 
-void main() => runApp(TodoCalApp());
+void main() =>
+    runApp(TodoCalApp(LocalDatabase(FlutterQueryExecutor.inDatabaseFolder(
+        path: 'db.sqlite', logStatements: true))));
 
 class TodoCalApp extends StatelessWidget {
+  final LocalDatabase db;
+  TodoCalApp(this.db);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       key: Key("Home Screen"),
       title: 'To-Do Scheduler',
-      home: HomeScreen(),
+      home: HomeScreen(this.db),
     );
   }
 }
 
 class HomeScreen extends StatelessWidget {
+  final LocalDatabase db;
+  HomeScreen(this.db);
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -40,7 +50,8 @@ class HomeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CalendarScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => CalendarScreen(this.db)),
                 );
               },
             ),
