@@ -75,8 +75,6 @@ class _AddCalendarEventScreenState extends State<AddCalendarEventScreen> {
       _startTimeController.clear();
       _endTimeController.clear();
 
-      print("PROBLEMO");
-
       return;
     }
 
