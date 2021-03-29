@@ -26,8 +26,4 @@ The To-Do Scheduler app is still in progress and it is actively being built by U
 | Shaun Donnelly | Tech Lead |
 | Andrew Han | Developer |
 | Mayank Rastogi | Developer |
-<<<<<<< HEAD
 | Claudia Tong | Designer |
-=======
-| Claudia Tong | Designer |
->>>>>>> 87113fe64fd43bdde2e5d9d8d21c28f4b7a9a698
