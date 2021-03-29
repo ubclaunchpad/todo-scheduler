@@ -13,7 +13,7 @@ class CalendarScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       // TODO: personalize title with user's name
-      key: Key("Calendar Screen"),
+      key: Key("calendar_screen"),
       body: Calendar(title: 'Calendar', db: this.db),
     );
   }
@@ -106,6 +106,7 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        key: Key("calendar_app_bar"),
         title: Text(widget.title),
         actions: <Widget>[
           IconButton(
@@ -135,7 +136,7 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
 
   Widget _buildTableCalendar() {
     return TableCalendar(
-      key: Key("Calendar Screen - Table Calendar"),
+      key: Key('calendar_widget'),
       calendarController: _calendarController,
       events: _events,
       startingDayOfWeek: StartingDayOfWeek.monday,
@@ -154,7 +155,6 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
         ),
       ),
       onDaySelected: _onDaySelected,
-      //onVisibleDaysChanged: _onVisibleDaysChanged,
       onCalendarCreated: _onCalendarCreated,
     );
   }
@@ -169,9 +169,10 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
           // TODO: order events by time after Event class implemented
           final event = _selectedEvents[index].toString();
           return Card(
+              key: Key('calendar_event'),
               child: ListTile(
-            title: Text(event),
-          ));
+                title: Text(event),
+              ));
         });
   }
 }
