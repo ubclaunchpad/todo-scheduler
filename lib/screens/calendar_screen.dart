@@ -2,29 +2,38 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:todo_scheduler/screens/add_calendar_event_screen.dart';
+import '../data/moor_database.dart';
 
 class CalendarScreen extends StatelessWidget {
+  final LocalDatabase db;
+  CalendarScreen(this.db);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // TODO: personalize title with user's name
       key: Key("calendar_screen"),
-      body: Calendar(title: 'Calendar'),
+      body: Calendar(title: 'Calendar', db: this.db),
     );
   }
 }
 
 class Calendar extends StatefulWidget {
-  Calendar({Key key, this.title}) : super(key: key);
+  Calendar({Key key, this.title, this.db}) : super(key: key);
 
   final String title;
+  final LocalDatabase db;
 
   @override
-  _CalendarState createState() => _CalendarState();
+  _CalendarState createState() => _CalendarState(this.db);
 }
 
 class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
   // load Map at start of run, upon add -> add to disk + memory, same for rem
+  _CalendarState(this.db);
+
+  final LocalDatabase db;
   Map<DateTime, List> _events;
   List _selectedEvents;
   AnimationController _animationController;
@@ -106,7 +115,10 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
               color: Colors.white,
             ),
             onPressed: () {
-              // TODO: navigate to Add Event screen
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AddCalendarEventScreen(this.db)));
             },
           ),
         ],

@@ -1,4 +1,4 @@
-import 'package:moor/moor.dart';
+import 'package:moor/moor.dart' hide Column;
 
 part 'moor_database.g.dart';
 
@@ -8,6 +8,8 @@ class CalendarItems extends Table {
   IntColumn get id => integer().autoIncrement()();
 
   TextColumn get title => text().withLength(min: 1)();
+
+  DateTimeColumn get date => dateTime()();
 
   DateTimeColumn get startTime => dateTime()();
 
@@ -36,7 +38,7 @@ class LocalDatabase extends _$LocalDatabase {
   a table definition.
   */
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 }
 
 //Data Access Object for TodoItems table

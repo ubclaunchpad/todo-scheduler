@@ -10,11 +10,13 @@ part of 'moor_database.dart';
 class CalendarItem extends DataClass implements Insertable<CalendarItem> {
   final int id;
   final String title;
+  final DateTime date;
   final DateTime startTime;
   final DateTime endTime;
   CalendarItem(
       {@required this.id,
       @required this.title,
+      @required this.date,
       @required this.startTime,
       @required this.endTime});
   factory CalendarItem.fromData(Map<String, dynamic> data, GeneratedDatabase db,
@@ -27,6 +29,8 @@ class CalendarItem extends DataClass implements Insertable<CalendarItem> {
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       title:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}title']),
+      date:
+          dateTimeType.mapFromDatabaseResponse(data['${effectivePrefix}date']),
       startTime: dateTimeType
           .mapFromDatabaseResponse(data['${effectivePrefix}start_time']),
       endTime: dateTimeType
@@ -42,6 +46,9 @@ class CalendarItem extends DataClass implements Insertable<CalendarItem> {
     if (!nullToAbsent || title != null) {
       map['title'] = Variable<String>(title);
     }
+    if (!nullToAbsent || date != null) {
+      map['date'] = Variable<DateTime>(date);
+    }
     if (!nullToAbsent || startTime != null) {
       map['start_time'] = Variable<DateTime>(startTime);
     }
@@ -56,6 +63,7 @@ class CalendarItem extends DataClass implements Insertable<CalendarItem> {
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       title:
           title == null && nullToAbsent ? const Value.absent() : Value(title),
+      date: date == null && nullToAbsent ? const Value.absent() : Value(date),
       startTime: startTime == null && nullToAbsent
           ? const Value.absent()
           : Value(startTime),
@@ -71,6 +79,7 @@ class CalendarItem extends DataClass implements Insertable<CalendarItem> {
     return CalendarItem(
       id: serializer.fromJson<int>(json['id']),
       title: serializer.fromJson<String>(json['title']),
+      date: serializer.fromJson<DateTime>(json['date']),
       startTime: serializer.fromJson<DateTime>(json['startTime']),
       endTime: serializer.fromJson<DateTime>(json['endTime']),
     );
@@ -81,16 +90,22 @@ class CalendarItem extends DataClass implements Insertable<CalendarItem> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'title': serializer.toJson<String>(title),
+      'date': serializer.toJson<DateTime>(date),
       'startTime': serializer.toJson<DateTime>(startTime),
       'endTime': serializer.toJson<DateTime>(endTime),
     };
   }
 
   CalendarItem copyWith(
-          {int id, String title, DateTime startTime, DateTime endTime}) =>
+          {int id,
+          String title,
+          DateTime date,
+          DateTime startTime,
+          DateTime endTime}) =>
       CalendarItem(
         id: id ?? this.id,
         title: title ?? this.title,
+        date: date ?? this.date,
         startTime: startTime ?? this.startTime,
         endTime: endTime ?? this.endTime,
       );
@@ -99,6 +114,7 @@ class CalendarItem extends DataClass implements Insertable<CalendarItem> {
     return (StringBuffer('CalendarItem(')
           ..write('id: $id, ')
           ..write('title: $title, ')
+          ..write('date: $date, ')
           ..write('startTime: $startTime, ')
           ..write('endTime: $endTime')
           ..write(')'))
@@ -106,14 +122,17 @@ class CalendarItem extends DataClass implements Insertable<CalendarItem> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode,
-      $mrjc(title.hashCode, $mrjc(startTime.hashCode, endTime.hashCode))));
+  int get hashCode => $mrjf($mrjc(
+      id.hashCode,
+      $mrjc(title.hashCode,
+          $mrjc(date.hashCode, $mrjc(startTime.hashCode, endTime.hashCode)))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is CalendarItem &&
           other.id == this.id &&
           other.title == this.title &&
+          other.date == this.date &&
           other.startTime == this.startTime &&
           other.endTime == this.endTime);
 }
@@ -121,31 +140,37 @@ class CalendarItem extends DataClass implements Insertable<CalendarItem> {
 class CalendarItemsCompanion extends UpdateCompanion<CalendarItem> {
   final Value<int> id;
   final Value<String> title;
+  final Value<DateTime> date;
   final Value<DateTime> startTime;
   final Value<DateTime> endTime;
   const CalendarItemsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
+    this.date = const Value.absent(),
     this.startTime = const Value.absent(),
     this.endTime = const Value.absent(),
   });
   CalendarItemsCompanion.insert({
     this.id = const Value.absent(),
     @required String title,
+    @required DateTime date,
     @required DateTime startTime,
     @required DateTime endTime,
   })  : title = Value(title),
+        date = Value(date),
         startTime = Value(startTime),
         endTime = Value(endTime);
   static Insertable<CalendarItem> custom({
     Expression<int> id,
     Expression<String> title,
+    Expression<DateTime> date,
     Expression<DateTime> startTime,
     Expression<DateTime> endTime,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
+      if (date != null) 'date': date,
       if (startTime != null) 'start_time': startTime,
       if (endTime != null) 'end_time': endTime,
     });
@@ -154,11 +179,13 @@ class CalendarItemsCompanion extends UpdateCompanion<CalendarItem> {
   CalendarItemsCompanion copyWith(
       {Value<int> id,
       Value<String> title,
+      Value<DateTime> date,
       Value<DateTime> startTime,
       Value<DateTime> endTime}) {
     return CalendarItemsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
+      date: date ?? this.date,
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
     );
@@ -172,6 +199,9 @@ class CalendarItemsCompanion extends UpdateCompanion<CalendarItem> {
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<DateTime>(date.value);
     }
     if (startTime.present) {
       map['start_time'] = Variable<DateTime>(startTime.value);
@@ -187,6 +217,7 @@ class CalendarItemsCompanion extends UpdateCompanion<CalendarItem> {
     return (StringBuffer('CalendarItemsCompanion(')
           ..write('id: $id, ')
           ..write('title: $title, ')
+          ..write('date: $date, ')
           ..write('startTime: $startTime, ')
           ..write('endTime: $endTime')
           ..write(')'))
@@ -216,6 +247,18 @@ class $CalendarItemsTable extends CalendarItems
     return GeneratedTextColumn('title', $tableName, false, minTextLength: 1);
   }
 
+  final VerificationMeta _dateMeta = const VerificationMeta('date');
+  GeneratedDateTimeColumn _date;
+  @override
+  GeneratedDateTimeColumn get date => _date ??= _constructDate();
+  GeneratedDateTimeColumn _constructDate() {
+    return GeneratedDateTimeColumn(
+      'date',
+      $tableName,
+      false,
+    );
+  }
+
   final VerificationMeta _startTimeMeta = const VerificationMeta('startTime');
   GeneratedDateTimeColumn _startTime;
   @override
@@ -241,7 +284,7 @@ class $CalendarItemsTable extends CalendarItems
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, title, startTime, endTime];
+  List<GeneratedColumn> get $columns => [id, title, date, startTime, endTime];
   @override
   $CalendarItemsTable get asDslTable => this;
   @override
@@ -261,6 +304,12 @@ class $CalendarItemsTable extends CalendarItems
           _titleMeta, title.isAcceptableOrUnknown(data['title'], _titleMeta));
     } else if (isInserting) {
       context.missing(_titleMeta);
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+          _dateMeta, date.isAcceptableOrUnknown(data['date'], _dateMeta));
+    } else if (isInserting) {
+      context.missing(_dateMeta);
     }
     if (data.containsKey('start_time')) {
       context.handle(_startTimeMeta,
