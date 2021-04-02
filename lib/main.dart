@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moor_flutter/moor_flutter.dart' hide Column;
+import 'package:todo_scheduler/screens/add_todo_item.dart';
 import 'package:todo_scheduler/screens/calendar_screen.dart';
 import './data/moor_database.dart';
 
@@ -41,7 +42,10 @@ class HomeScreen extends StatelessWidget {
               key: Key("Home Screen - To-Do List Button"),
               child: Text("To-Do List"),
               onPressed: () {
-                // TODO: implement navigation from Home Page to To-do List page using this button
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddTodoItemScreen()),
+                );
               },
             ),
             ElevatedButton(
