@@ -3,7 +3,9 @@ import '../data/moor_database.dart';
 import 'package:flutter/cupertino.dart';
 
 class AddTodoItemScreen extends StatelessWidget {
-  AddTodoItemScreen();
+  final LocalDatabase db;
+
+  AddTodoItemScreen(this.db);
 
   @override
   Widget build(BuildContext context) {
@@ -13,17 +15,31 @@ class AddTodoItemScreen extends StatelessWidget {
         primarySwatch: Colors.orange,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: LayoutBasics(),
+      home: LayoutBasics(this.db),
     );
   }
 }
 
 class LayoutBasics extends StatefulWidget {
+  final LocalDatabase db;
+
+  LayoutBasics(this.db);
+
   @override
-  LayoutBasicsState createState() => LayoutBasicsState();
+  LayoutBasicsState createState() => LayoutBasicsState(this.db);
 }
 
 class LayoutBasicsState extends State<LayoutBasics> {
+  final _titleController = TextEditingController();
+  final _expDurationController = TextEditingController();
+  LocalDatabase db;
+  TodoItemDao todoItemDao;
+
+  LayoutBasicsState(LocalDatabase localDb) {
+    this.db = localDb;
+    this.todoItemDao = TodoItemDao(this.db);
+  }
+
   List<bool> isSelected;
   List<String> urgencyLevel = ['N/A', "ASAP", 'Eventually', 'If there\'s time'];
   int urgencyVal = 0;
@@ -40,6 +56,10 @@ class LayoutBasicsState extends State<LayoutBasics> {
     else if (val == 1)
       urgencyOption = 'Eventually';
     else if (val == 2) urgencyOption = 'If there\'s time';
+  }
+
+  void _addTodoToDB(TodoItem todoItem) async {
+    await todoItemDao.insertTodoItem(todoItem);
   }
 
   @override
@@ -84,6 +104,7 @@ class LayoutBasicsState extends State<LayoutBasics> {
                           fontFamily: "Poppins",
                           fontStyle: FontStyle.italic,
                         ),
+                        controller: _titleController,
                       ),
                     ],
                   ),
@@ -116,6 +137,7 @@ class LayoutBasicsState extends State<LayoutBasics> {
                           fontFamily: "Poppins",
                           fontStyle: FontStyle.italic,
                         ),
+                        controller: _expDurationController,
                       ),
                       SizedBox(height: 30),
                     ],
@@ -206,7 +228,15 @@ class LayoutBasicsState extends State<LayoutBasics> {
                         padding: const EdgeInsets.all(20.0),
                         child: ElevatedButton(
                             //Add to database
-                            onPressed: () {},
+                            onPressed: () {
+                              TodoItem todoItem = TodoItem(
+                                  title: _titleController.text,
+                                  duration:
+                                      int.parse(_expDurationController.text),
+                                  dateAdded: DateTime.now());
+
+                              _addTodoToDB(todoItem);
+                            },
                             style: ElevatedButton.styleFrom(
                               elevation: 10,
                               primary: Colors.blue[300], // background
