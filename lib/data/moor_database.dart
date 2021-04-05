@@ -23,7 +23,7 @@ class TodoItems extends Table {
 
   TextColumn get title => text().withLength(min: 1)();
 
-  //Duration is measured in seconds (since we are sticking mainly to shorter tasks)
+  //Duration is measured in minutes (since we are sticking mainly to shorter tasks)
   IntColumn get duration => integer()();
 
   DateTimeColumn get dateAdded => dateTime()();
