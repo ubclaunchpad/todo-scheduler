@@ -1,7 +1,11 @@
-import 'package:flutter/material.dart';
-import '../data/moor_database.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:todo_scheduler/screens/add_calendar_event_screen.dart';
+import '../data/moor_database.dart';
 
+/*
 class AddTodoItemScreen extends StatelessWidget {
   final LocalDatabase db;
 
@@ -12,10 +16,25 @@ class AddTodoItemScreen extends StatelessWidget {
     return MaterialApp(
       title: 'Scheduler',
       theme: ThemeData(
-        primarySwatch: Colors.orange,
+        primarySwatch: Colors.purple,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: LayoutBasics(this.db),
+    );
+  }
+}
+*/
+class AddTodoItemScreen extends StatelessWidget {
+  final LocalDatabase db;
+  AddTodoItemScreen(this.db);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // TODO: personalize title with user's name
+      key: Key("add_todo_item_screen"),
+      body: LayoutBasics(this.db),
+      //Calendar(title: 'Calendar', db: this.db),
     );
   }
 }
@@ -67,12 +86,13 @@ class LayoutBasicsState extends State<LayoutBasics> {
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
         centerTitle: true,
         title: Text('Add To-Do Item'),
       ),
       body: SingleChildScrollView(
         child: Container(
-          color: Colors.orange[200],
+          color: Colors.white,
           child: SafeArea(
             child: Column(
               children: [
@@ -84,7 +104,7 @@ class LayoutBasicsState extends State<LayoutBasics> {
                       new TextFormField(
                         decoration: new InputDecoration(
                           labelText: "Title",
-                          fillColor: Colors.orange[50],
+                          fillColor: Colors.deepPurple[50],
                           filled: true,
                           border: new OutlineInputBorder(
                             borderRadius: new BorderRadius.circular(25.0),
@@ -101,9 +121,9 @@ class LayoutBasicsState extends State<LayoutBasics> {
                         },
                         keyboardType: TextInputType.emailAddress,
                         style: new TextStyle(
-                          fontFamily: "Poppins",
-                          fontStyle: FontStyle.italic,
-                        ),
+                            fontFamily: "Poppins",
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w900),
                         controller: _titleController,
                       ),
                     ],
@@ -117,7 +137,7 @@ class LayoutBasicsState extends State<LayoutBasics> {
                       new TextFormField(
                         decoration: new InputDecoration(
                           labelText: "Expected Duration",
-                          fillColor: Colors.orange[50],
+                          fillColor: Colors.deepPurple[50],
                           filled: true,
                           border: new OutlineInputBorder(
                             borderRadius: new BorderRadius.circular(25.0),
@@ -134,9 +154,9 @@ class LayoutBasicsState extends State<LayoutBasics> {
                         },
                         keyboardType: TextInputType.emailAddress,
                         style: new TextStyle(
-                          fontFamily: "Poppins",
-                          fontStyle: FontStyle.italic,
-                        ),
+                            fontFamily: "Poppins",
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w900),
                         controller: _expDurationController,
                       ),
                       SizedBox(height: 30),
@@ -150,9 +170,9 @@ class LayoutBasicsState extends State<LayoutBasics> {
                       SizedBox(height: 10),
                       Text("Urgency",
                           style: TextStyle(
-                            fontFamily: "Poppins",
-                            fontStyle: FontStyle.italic,
-                          )),
+                              fontFamily: "Poppins",
+                              fontStyle: FontStyle.italic,
+                              fontSize: 18)),
                     ],
                   ),
                 ),
@@ -160,18 +180,23 @@ class LayoutBasicsState extends State<LayoutBasics> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Container(
-                      color: Colors.orange[50],
+                      color: Colors.deepPurple[50],
                       child: ToggleButtons(
                         isSelected: isSelected,
                         selectedColor: Colors.white,
-                        fillColor: Colors.orange,
-                        renderBorder: false,
+                        fillColor: Colors.deepPurple,
+                        renderBorder: true,
+                        borderWidth: 1,
+                        borderColor: Colors.black,
                         children: <Widget>[
                           // first toggle button
                           Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: Text(
                               'ASAP',
+                              style: new TextStyle(
+                                  fontFamily: "Poppins",
+                                  fontWeight: FontWeight.w900),
                             ),
                           ),
                           // second toggle button
@@ -179,6 +204,9 @@ class LayoutBasicsState extends State<LayoutBasics> {
                             padding: const EdgeInsets.all(12.0),
                             child: Text(
                               'Eventually',
+                              style: new TextStyle(
+                                  fontFamily: "Poppins",
+                                  fontWeight: FontWeight.w900),
                             ),
                           ),
                           // third toggle button
@@ -186,6 +214,9 @@ class LayoutBasicsState extends State<LayoutBasics> {
                             padding: const EdgeInsets.all(12.0),
                             child: Text(
                               'If there\'s time',
+                              style: new TextStyle(
+                                  fontFamily: "Poppins",
+                                  fontWeight: FontWeight.w900),
                             ),
                           ),
                         ],
@@ -239,7 +270,7 @@ class LayoutBasicsState extends State<LayoutBasics> {
                             },
                             style: ElevatedButton.styleFrom(
                               elevation: 10,
-                              primary: Colors.blue[300], // background
+                              primary: Colors.deepPurple, // background
                               onPrimary: Colors.white, // foreground
                             ),
                             child: Text(' SUBMIT')),

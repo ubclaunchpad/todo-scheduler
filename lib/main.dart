@@ -76,11 +76,15 @@ class HomeScreen extends StatelessWidget {
                     child: ElevatedButton(
                       key: Key("Home Screen - To-Do List Button"),
                       child: Text("To-Do List"),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.deepPurple, // background
+                        onPrimary: Colors.white, // foreground
+                      ),
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => AddTodoItemScreen()),
+                              builder: (context) => AddTodoItemScreen(this.db)),
                         );
                       },
                     ),
@@ -109,8 +113,9 @@ class HomeScreen extends StatelessWidget {
                       fontFamily: "Open Sans",
                       fontStyle: FontStyle.italic,
                       fontWeight: FontWeight.w900,
+                      decoration: TextDecoration.underline,
                       fontSize: 20)),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               ListView.builder(
                   shrinkWrap: true,
                   physics: const ClampingScrollPhysics(),
@@ -129,7 +134,7 @@ class HomeScreen extends StatelessWidget {
                                   itemsEvents[index].endTime.toString()),
                           tileColor: itemsEvents[index].eventType == true
                               ? Colors.blue
-                              : Colors.purple,
+                              : Colors.deepPurple,
                         ));
                   })
             ],
