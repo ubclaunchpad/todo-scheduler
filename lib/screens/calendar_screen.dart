@@ -1,9 +1,13 @@
+import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:todo_scheduler/screens/add_calendar_event_screen.dart';
 import '../data/moor_database.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 
 class CalendarScreen extends StatelessWidget {
   final LocalDatabase db;
@@ -31,41 +35,52 @@ class Calendar extends StatefulWidget {
 
 class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
   // load Map at start of run, upon add -> add to disk + memory, same for rem
-  _CalendarState(this.db);
+  _CalendarState(LocalDatabase localDb) {
+    this.db = localDb;
+    this.calendarItemDao = CalendarItemDao(this.db);
+  }
 
-  final LocalDatabase db;
-  Map<DateTime, List> _events;
+  LocalDatabase db;
+  CalendarItemDao calendarItemDao;
+  Map<DateTime, List> _events = HashMap();
   List _selectedEvents;
   AnimationController _animationController;
   CalendarController _calendarController;
 
+  bool _isSameDate(DateTime date1, DateTime date2) {
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day;
+  }
+
+  Future<Map<DateTime, List>> _initEvents() async {
+    Map<DateTime, List> _asyncEvents = HashMap();
+    List<CalendarItem> calendarItems =
+        await calendarItemDao.getAllCalendarItems();
+    for (CalendarItem calendarItem in calendarItems) {
+      bool dateExists = false;
+      for (MapEntry entry in _asyncEvents.entries) {
+        if (_isSameDate(entry.key, calendarItem.date)) {
+          entry.value.add(calendarItem);
+          dateExists = true;
+          break;
+        }
+      }
+      if (!dateExists) {
+        _asyncEvents[calendarItem.date] = [calendarItem];
+      }
+    }
+    return _asyncEvents;
+  }
+
   void initState() {
     super.initState();
     final _selectedDay = DateTime.now();
-    // TODO: load events from database
-    _events = {
-      _selectedDay.subtract(Duration(days: 12)): [
-        'CPSC 310: 13:00 - 13:50',
-        'CPSC 320: 14:00 - 14:50',
-        'CPSC 322: 15:00 - 15:50',
-        'Bike Practice: 18:00 - 19:25',
-        'dummy event 1',
-        'dummy event 2',
-        'dummy event 3',
-        'dummy event 4',
-        'dummy event 5',
-        'dummy event 6',
-      ],
-      _selectedDay.subtract(Duration(days: 5)): [
-        'Launch Pad Meeting: 18:30 - 19:00'
-      ],
-      _selectedDay.subtract(Duration(days: 4)): [
-        'CPSC 310: 13:00 - 13:50',
-        'CPSC 320: 14:00 - 14:50',
-        'CPSC 322: 15:00 - 15:50',
-        'Bike Practice: 18:00 - 19:25',
-      ],
-    };
+    _initEvents().then((response) {
+      setState(() {
+        _events = response;
+      });
+    });
 
     _selectedEvents = _events[_selectedDay] ?? [];
     _calendarController = CalendarController();
@@ -89,6 +104,10 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
     print('CALLBACK: _onDaySelected');
     setState(() {
       _selectedEvents = events;
+      if (_selectedEvents.isNotEmpty) {
+        _selectedEvents
+            .sort((item1, item2) => item1.startTime.compareTo(item2.startTime));
+      }
     });
   }
 
@@ -165,14 +184,17 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
         padding: const EdgeInsets.all(8),
         itemCount: _selectedEvents.length,
         itemBuilder: (context, index) {
-          // TODO: refactor in Event class issue
-          // TODO: order events by time after Event class implemented
-          final event = _selectedEvents[index].toString();
+          final CalendarItem event = _selectedEvents[index];
           return Card(
               key: Key('calendar_event'),
               child: ListTile(
-                title: Text(event),
-              ));
+                  title: Text(event.title,
+                      style: TextStyle(color: Colors.blueGrey[900])),
+                  subtitle: Text(
+                      DateFormat.jm().format(event.startTime).toString() +
+                          " - " +
+                          DateFormat.jm().format(event.endTime).toString()),
+                  tileColor: Colors.cyanAccent[400]));
         });
   }
 }
