@@ -80,7 +80,7 @@ class HomeScreen extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => AddTodoItemScreen()),
+                              builder: (context) => AddTodoItemScreen(this.db)),
                         );
                       },
                     ),
