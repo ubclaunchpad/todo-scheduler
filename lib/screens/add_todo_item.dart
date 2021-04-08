@@ -4,6 +4,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:todo_scheduler/screens/add_calendar_event_screen.dart';
 import '../data/moor_database.dart';
+import '../main.dart';
 
 /*
 class AddTodoItemScreen extends StatelessWidget {
@@ -89,6 +90,10 @@ class LayoutBasicsState extends State<LayoutBasics> {
         backgroundColor: Colors.deepPurple,
         centerTitle: true,
         title: Text('Add To-Do Item'),
+        leading: BackButton(onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => HomeScreen(this.db)));
+        }),
       ),
       body: SingleChildScrollView(
         child: Container(

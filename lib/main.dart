@@ -34,9 +34,27 @@ class TodoCalApp extends StatelessWidget {
   }
 }
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final LocalDatabase db;
   HomeScreen(this.db);
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState(this.db);
+}
+
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+  LocalDatabase db;
+  CalendarItemDao calendarItemDao;
+  TodoItemDao todoItemDao;
+
+  List<CalendarItem> currDayCalendarItems = [];
+  List<TodoItem> allTodoItems = [];
+
+  _HomeScreenState(LocalDatabase localDb) {
+    this.db = localDb;
+    this.calendarItemDao = CalendarItemDao(this.db);
+    this.todoItemDao = TodoItemDao(this.db);
+  }
 
   List<ScheduleItem> itemsEvents = [
     ScheduleItem('MATH 100 Lecture', 900, 1000, true),
@@ -46,6 +64,48 @@ class HomeScreen extends StatelessWidget {
     ScheduleItem('CPSC 210 Lecture', 1300, 1430, true),
     ScheduleItem('Pay Phone Bill', 1430, 1445, false)
   ];
+
+  bool _isSameDate(DateTime date1, DateTime date2) {
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day;
+  }
+
+  Future<List<CalendarItem>> _getAllCurrDayCalendarItems() async {
+    List<CalendarItem> result = [];
+    List<CalendarItem> allCalendarItems =
+        await calendarItemDao.getAllCalendarItems();
+    for (CalendarItem item in allCalendarItems) {
+      if (_isSameDate(item.date, DateTime.now())) {
+        result.add(item);
+      }
+    }
+    return result;
+  }
+
+  Future<List<TodoItem>> _getAllTodoItems() async {
+    List<TodoItem> todoItems = await todoItemDao.getAllTodoItems();
+    return todoItems;
+  }
+
+  void initState() {
+    super.initState();
+    _getAllCurrDayCalendarItems().then((response) {
+      setState(() {
+        currDayCalendarItems = response;
+      });
+    });
+    _getAllTodoItems().then((response) {
+      setState(() {
+        allTodoItems = response;
+      });
+    });
+  }
+
+  @override
+  dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
