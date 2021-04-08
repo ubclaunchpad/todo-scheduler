@@ -8,6 +8,7 @@ import 'package:todo_scheduler/screens/add_calendar_event_screen.dart';
 import '../data/moor_database.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import '../main.dart';
 
 class CalendarScreen extends StatelessWidget {
   final LocalDatabase db;
@@ -90,6 +91,8 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
     );
 
     _animationController.forward();
+    print("EVENTS: $_events");
+    print("SELECTED EVENTS: $_selectedEvents");
   }
 
   // https://github.com/aleksanderwozniak/table_calendar/blob/master/example/lib/main.dart
@@ -108,6 +111,7 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
         _selectedEvents
             .sort((item1, item2) => item1.startTime.compareTo(item2.startTime));
       }
+      print("SELECTED EVENTS ON DAY: $_selectedEvents");
     });
   }
 
@@ -125,23 +129,26 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        key: Key("calendar_app_bar"),
-        title: Text(widget.title),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.add,
-              color: Colors.white,
+          key: Key("calendar_app_bar"),
+          title: Text(widget.title),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AddCalendarEventScreen(this.db)));
+              },
             ),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AddCalendarEventScreen(this.db)));
-            },
-          ),
-        ],
-      ),
+          ],
+          leading: BackButton(onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => HomeScreen(this.db)));
+          })),
       body: Column(
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
