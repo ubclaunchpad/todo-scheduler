@@ -10,13 +10,24 @@ void main() =>
 
 class ScheduleItem {
   String eventTitle;
-  var startTime;
-  var endTime;
-  bool eventType;
-  ScheduleItem(this.eventTitle, this.startTime, this.endTime, this.eventType);
+  DateTime startTime;
+  DateTime endTime;
+  bool eventType; // set to true when type = calendar item
+  ScheduleItem(this.eventTitle, this.startTime, this.endTime, this.eventType,
+      {int});
   @override
   String toString() {
     return '{ ${this.eventTitle}, ${this.startTime}, ${this.endTime}, ${this.eventType} }';
+  }
+
+  compareTo(ScheduleItem sched2) {
+    if (this.startTime.isBefore(sched2.startTime)) {
+      return -1;
+    } else if (this.startTime.isAfter(sched2.startTime)) {
+      return 1;
+    } else {
+      return 0;
+    }
   }
 }
 
@@ -48,22 +59,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   TodoItemDao todoItemDao;
 
   List<CalendarItem> currDayCalendarItems = [];
-  List<TodoItem> allTodoItems = [];
+  List<TodoItem> allTodoItems = new List();
 
   _HomeScreenState(LocalDatabase localDb) {
     this.db = localDb;
     this.calendarItemDao = CalendarItemDao(this.db);
     this.todoItemDao = TodoItemDao(this.db);
   }
-
-  List<ScheduleItem> itemsEvents = [
-    ScheduleItem('MATH 100 Lecture', 900, 1000, true),
-    ScheduleItem('Pay house rent', 1030, 1045, false),
-    ScheduleItem('MATH 100 Homework', 1100, 1145, false),
-    ScheduleItem('PHYS 170 Lecture', 1200, 1300, true),
-    ScheduleItem('CPSC 210 Lecture', 1300, 1430, true),
-    ScheduleItem('Pay Phone Bill', 1430, 1445, false)
-  ];
 
   bool _isSameDate(DateTime date1, DateTime date2) {
     return date1.year == date2.year &&
@@ -83,9 +85,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return result;
   }
 
+  List<ScheduleItem> finalSchedule = new List();
+
   Future<List<TodoItem>> _getAllTodoItems() async {
     List<TodoItem> todoItems = await todoItemDao.getAllTodoItems();
     return todoItems;
+  }
+
+  String formatMinutes(String minutes) {
+    if (minutes.length == 1) {
+      minutes += "0";
+    }
+    return minutes;
   }
 
   void initState() {
@@ -93,13 +104,68 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     _getAllCurrDayCalendarItems().then((response) {
       setState(() {
         currDayCalendarItems = response;
+        return 1;
       });
-    });
-    _getAllTodoItems().then((response) {
+    }).then((res) {
+      return _getAllTodoItems();
+    }).then((response) {
       setState(() {
         allTodoItems = response;
+        return 1;
       });
-    });
+    }).then((res) => {finalSchedule = getSchedule()});
+  }
+
+  List<ScheduleItem> getSchedule() {
+    List<ScheduleItem> todaySched = new List();
+    currDayCalendarItems.sort((cal1, cal2) => cal1.compareTo(cal2));
+    allTodoItems.sort((todo1, todo2) => todo1.compareTo(todo2));
+    // TODO: allow user to customize startMarker and end time ("nineAtNight")
+    DateTime startMarker = DateTime.parse("2021-04-10 08:00:00");
+    DateTime nineAtNight = DateTime.parse("2021-04-10 21:00:00");
+    DateTime endMarker = currDayCalendarItems[0].startTime;
+    Duration timeDiff = endMarker.difference(startMarker);
+    int i = 0;
+    while (startMarker.isBefore(nineAtNight) &&
+        (currDayCalendarItems.length > i || allTodoItems.isNotEmpty)) {
+      if (allTodoItems.isNotEmpty && startMarker.isBefore(endMarker)) {
+        timeDiff = endMarker.difference(startMarker);
+        while (allTodoItems.isNotEmpty &&
+            timeDiff.inMinutes > 10 &&
+            (allTodoItems[0].duration < (timeDiff.inMinutes - 10))) {
+          DateTime todoStartTime = startMarker.add(new Duration(minutes: 5));
+          ScheduleItem newTodo = new ScheduleItem(
+              allTodoItems[0].title,
+              todoStartTime,
+              todoStartTime
+                  .add(new Duration(minutes: allTodoItems[0].duration)),
+              false);
+          todaySched.add(newTodo);
+          startMarker = newTodo.endTime;
+          timeDiff = endMarker.difference(startMarker);
+          allTodoItems.remove(allTodoItems[0]);
+        }
+      }
+
+      if (currDayCalendarItems.length > i) {
+        ScheduleItem newCalEvent = new ScheduleItem(
+            currDayCalendarItems[i].title,
+            currDayCalendarItems[i].startTime,
+            currDayCalendarItems[i].endTime,
+            true);
+        todaySched.add(newCalEvent);
+        startMarker = newCalEvent.endTime;
+        if (currDayCalendarItems.length == i + 1) {
+          endMarker = nineAtNight;
+        } else {
+          endMarker = currDayCalendarItems[i + 1].startTime;
+        }
+        // timeDiff = endMarker.difference(startMarker);
+        i++;
+      }
+    }
+    todaySched.sort((sched1, sched2) => sched1.compareTo(sched2));
+    return todaySched;
   }
 
   @override
@@ -112,20 +178,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return Center(
       child: Scaffold(
         appBar: AppBar(
-          key: Key("Home Screen - App Bar"),
-          title: Text('To-Do Scheduler'),
-        ),
+            key: Key("Home Screen - App Bar"),
+            title: Text('TimeFinder',
+                style: TextStyle(fontFamily: "Modern Love"))),
         body: SingleChildScrollView(
           child: Center(
               child: Column(
             children: [
-              SizedBox(height: 50),
-              Text('Add To Do Item',
-                  style: TextStyle(
-                      fontFamily: "Open Sans",
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 20)),
               SizedBox(height: 30),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -137,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       key: Key("Home Screen - To-Do List Button"),
                       child: Text("To-Do List"),
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.deepPurple, // background
+                        primary: Colors.deepPurple[400], // background
                         onPrimary: Colors.white, // foreground
                       ),
                       onPressed: () {
@@ -167,34 +226,44 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   )
                 ],
               ),
-              SizedBox(height: 70),
+              SizedBox(height: 30),
               Text('Today\'s Schedule',
                   style: TextStyle(
                       fontFamily: "Open Sans",
                       fontStyle: FontStyle.italic,
                       fontWeight: FontWeight.w900,
-                      decoration: TextDecoration.underline,
                       fontSize: 20)),
               SizedBox(height: 10),
               ListView.builder(
                   shrinkWrap: true,
                   physics: const ClampingScrollPhysics(),
-                  itemCount: itemsEvents.length, //eventsList
+                  itemCount: finalSchedule.length, //eventsList
                   padding: const EdgeInsets.all(8),
                   key: Key("Home Page - Events List"),
                   itemBuilder: (context, index) {
                     return Card(
                         key: Key('event'),
                         child: ListTile(
-                          title: Text(itemsEvents[index].eventTitle,
+                          title: Text(finalSchedule[index].eventTitle,
                               style: TextStyle(color: Colors.white)),
                           subtitle: Text(
-                              itemsEvents[index].startTime.toString() +
+                              finalSchedule[index].startTime.hour.toString() +
+                                  ":" +
+                                  formatMinutes(finalSchedule[index]
+                                      .startTime
+                                      .minute
+                                      .toString()) +
                                   " - " +
-                                  itemsEvents[index].endTime.toString()),
-                          tileColor: itemsEvents[index].eventType == true
+                                  finalSchedule[index].endTime.hour.toString() +
+                                  ":" +
+                                  formatMinutes(finalSchedule[index]
+                                      .endTime
+                                      .minute
+                                      .toString()),
+                              style: TextStyle(color: Colors.black)),
+                          tileColor: finalSchedule[index].eventType == true
                               ? Colors.blue
-                              : Colors.deepPurple,
+                              : Colors.deepPurple[400],
                         ));
                   })
             ],

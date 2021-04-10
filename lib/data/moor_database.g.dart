@@ -7,7 +7,8 @@ part of 'moor_database.dart';
 // **************************************************************************
 
 // ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_this
-class CalendarItem extends DataClass implements Insertable<CalendarItem> {
+class CalendarItem extends DataClass
+    implements Insertable<CalendarItem>, Comparable<CalendarItem> {
   final int id;
   final String title;
   final DateTime date;
@@ -135,6 +136,17 @@ class CalendarItem extends DataClass implements Insertable<CalendarItem> {
           other.date == this.date &&
           other.startTime == this.startTime &&
           other.endTime == this.endTime);
+
+  @override
+  int compareTo(CalendarItem other) {
+    if (this.startTime.isBefore(other.startTime)) {
+      return -1;
+    } else if (this.startTime.isAfter(other.startTime)) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
 }
 
 class CalendarItemsCompanion extends UpdateCompanion<CalendarItem> {
@@ -340,7 +352,8 @@ class $CalendarItemsTable extends CalendarItems
   }
 }
 
-class TodoItem extends DataClass implements Insertable<TodoItem> {
+class TodoItem extends DataClass
+    implements Insertable<TodoItem>, Comparable<TodoItem> {
   final int id;
   final String title;
   final int duration;
@@ -448,6 +461,23 @@ class TodoItem extends DataClass implements Insertable<TodoItem> {
           other.title == this.title &&
           other.duration == this.duration &&
           other.dateAdded == this.dateAdded);
+
+  @override
+  int compareTo(TodoItem other) {
+    if (this.duration < other.duration) {
+      return -1;
+    } else if (this.duration > other.duration) {
+      return 1;
+    } else {
+      if (this.dateAdded.isBefore(other.dateAdded)) {
+        return -1;
+      } else if (this.dateAdded.isAfter(other.dateAdded)) {
+        return 1;
+      } else {
+        return 0;
+      }
+    }
+  }
 }
 
 class TodoItemsCompanion extends UpdateCompanion<TodoItem> {
